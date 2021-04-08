@@ -5,8 +5,6 @@ VisualStudioVersion = 16.0.31112.23
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StoryChainAPI", "StoryChainAPI\StoryChainAPI.csproj", "{C6A12B3A-3074-413F-842F-BA640A91A8F4}"
 EndProject
-Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "StoryChain", "StoryChain\StoryChain.njsproj", "{AECC5462-F274-407A-8DBE-26B7143393C7}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,10 +15,6 @@ Global
 		{C6A12B3A-3074-413F-842F-BA640A91A8F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C6A12B3A-3074-413F-842F-BA640A91A8F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C6A12B3A-3074-413F-842F-BA640A91A8F4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AECC5462-F274-407A-8DBE-26B7143393C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AECC5462-F274-407A-8DBE-26B7143393C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AECC5462-F274-407A-8DBE-26B7143393C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AECC5462-F274-407A-8DBE-26B7143393C7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

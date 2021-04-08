@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace StoryChainAPI.DTO.Requests
 {
-    public class RegistrationRequest
+    public class SignUpRequest
     {
-        [Required]
-        public string Name { get; set; }
         [Required]
         public string Email { get; set; }
         [Required]

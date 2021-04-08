@@ -16,6 +16,8 @@ namespace StoryChainAPI
 {
     public class Startup
     {
+        readonly string _myAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -26,6 +28,16 @@ namespace StoryChainAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: _myAllowSpecificOrigins,
+                                  builder =>
+                                  {
+                                      builder.AllowAnyMethod();
+                                      builder.AllowAnyHeader();
+                                      builder.WithOrigins("http://localhost:1337");
+                                  });
+            });
 
             services.Configure<JwtConfig>(Configuration.GetSection("JwtConfig"));
 
@@ -77,6 +89,7 @@ namespace StoryChainAPI
             app.UseHttpsRedirection();
 
             app.UseRouting();
+            app.UseCors(_myAllowSpecificOrigins);
             app.UseAuthentication();
             app.UseAuthorization();
 

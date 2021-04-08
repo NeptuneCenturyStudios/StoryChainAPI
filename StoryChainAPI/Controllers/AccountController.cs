@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -16,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace StoryChainAPI.Controllers
 {
-    [Route("api/account")]
+    [Route("api/v1/account")]
     [ApiController]
     public class AccountController : ControllerBase
     {
@@ -35,8 +36,8 @@ namespace StoryChainAPI.Controllers
         /// <param name="user"></param>
         /// <returns></returns>
         [HttpPost]
-        [Route("Register")]
-        public async Task<IActionResult> Register([FromBody] RegistrationRequest user)
+        [Route("sign-up")]
+        public async Task<IActionResult> SignUp([FromBody] SignUpRequest user)
         {
             // Check if the incoming request is valid
             if (ModelState.IsValid)
@@ -49,7 +50,7 @@ namespace StoryChainAPI.Controllers
                     {
                         Result = false,
                         Errors = new List<string>(){
-                                            "Email already exist"
+                                            "Email already exists"
                                         }
                     });
                 }
@@ -106,7 +107,7 @@ namespace StoryChainAPI.Controllers
                     {
                         Result = false,
                         Errors = new List<string>(){
-                                        "Invalid authentication request"
+                                        "Uh oh... those credentials didn't work! Please try again or reset your password."
                                     }
                     });
                 }
