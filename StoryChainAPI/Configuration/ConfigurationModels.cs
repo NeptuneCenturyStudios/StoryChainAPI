@@ -10,4 +10,9 @@ namespace StoryChainAPI.Configuration
         public string Secret { get; set; }
 
     }
+
+    public class WebsiteConfig
+    {
+        public string Host { get; set; }
+    }
 }

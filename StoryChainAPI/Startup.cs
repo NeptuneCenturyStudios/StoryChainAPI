@@ -40,6 +40,7 @@ namespace StoryChainAPI
             });
 
             services.Configure<JwtConfig>(Configuration.GetSection("JwtConfig"));
+            services.Configure<WebsiteConfig>(Configuration.GetSection("Website"));
 
             services.AddAuthentication(options =>
             {
