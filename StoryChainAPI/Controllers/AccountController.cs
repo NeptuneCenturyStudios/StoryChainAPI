@@ -37,88 +37,74 @@ namespace StoryChainAPI.Controllers
         /// <summary>
         /// Registers a new user in the system
         /// </summary>
-        /// <param name="user"></param>
+        /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost]
         [Route("sign-up", Name = "SignUp")]
-        public async Task<IActionResult> SignUp([FromBody] SignUpRequest user)
+        public async Task<IActionResult> SignUp([FromBody] SignUpRequest request)
         {
             // Check if the incoming request is valid
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                // Check if the user with the same email exist
-                var existingUser = await _userManager.FindByEmailAsync(user.Email);
-                if (existingUser != null)
-                {
-                    return BadRequest(new RegistrationResult()
-                    {
-                        Result = false,
-                        Errors = new List<string>(){
-                                            "Email already exists"
-                                        }
-                    });
-                }
-
-                var newUser = new IdentityUser() { Email = user.Email, UserName = user.Email };
-                var isCreated = await _userManager.CreateAsync(newUser, user.Password);
-                if (isCreated.Succeeded)
-                {
-                    var jwtToken = GenerateJwtToken(newUser);
-
-                    return Ok(new RegistrationResult()
-                    {
-                        Result = true,
-                        Token = jwtToken
-                    });
-                }
-
-                return new JsonResult(new RegistrationResult()
-                {
-                    Result = false,
-                    Errors = isCreated.Errors.Select(x => x.Description).ToList()
-                }
-                        )
-                { StatusCode = 500 };
+                return BadRequest(ModelState);
             }
 
-            return BadRequest(new RegistrationResult()
+            // Check if the user with the same email exist
+            var existingUser = await _userManager.FindByEmailAsync(request.Email);
+            if (existingUser != null)
             {
-                Result = false,
-                Errors = new List<string>(){
-                                            "Invalid payload"
-                                        }
-            });
+                ModelState.AddModelError("", "Email already exists");
+                return BadRequest(ModelState);
+            }
+
+            // Create the user
+            var user = new IdentityUser() { Email = request.Email, UserName = request.Email };
+            var isCreated = await _userManager.CreateAsync(user, request.Password);
+            if (isCreated.Succeeded)
+            {
+                var jwtToken = GenerateJwtToken(user);
+
+                return Ok(new RegistrationResult()
+                {
+                    Result = true,
+                    Token = jwtToken
+                });
+            }
+            else
+            {
+
+                // Relay the errors to the client
+                isCreated.Errors.Select(x => x.Description).ToList().ForEach(errorDesc =>
+                {
+                    ModelState.AddModelError("", errorDesc);
+
+                });
+
+                return BadRequest(ModelState);
+            }
+
         }
 
         /// <summary>
         /// Signs a user in and returns a jwt
         /// </summary>
-        /// <param name="user"></param>
+        /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost]
         [Route("sign-in")]
-        public async Task<IActionResult> SignIn([FromBody] SignInRequest user)
+        public async Task<IActionResult> SignIn([FromBody] SignInRequest request)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                // check if the user with the same email exist
-                var existingUser = await _userManager.FindByEmailAsync(user.Email);
+                return BadRequest(ModelState);
+            }
 
-                if (existingUser == null)
-                {
-                    // We dont want to give to much information on why the request has failed for security reasons
-                    return BadRequest(new AuthResult()
-                    {
-                        Result = false,
-                        Errors = new List<string>(){
-                            "Uh oh... those credentials didn't work! Please try again or reset your password."
-                        }
-                    });
-                }
-
-                // Now we need to check if the user has inputed the right password
-                var isCorrect = await _userManager.CheckPasswordAsync(existingUser, user.Password);
-
+            // Check if the user with the same email exists
+            var existingUser = await _userManager.FindByEmailAsync(request.Email);
+            if (existingUser != null)
+            {
+                // Now we need to check if the user has entered the right password
+                var isCorrect = await _userManager.CheckPasswordAsync(existingUser, request.Password);
                 if (isCorrect)
                 {
                     var jwtToken = GenerateJwtToken(existingUser);
@@ -129,28 +115,19 @@ namespace StoryChainAPI.Controllers
                         Token = jwtToken
                     });
                 }
-                else
-                {
-                    // We dont want to give to much information on why the request has failed for security reasons
-                    return BadRequest(new AuthResult()
-                    {
-                        Result = false,
-                        Errors = new List<string>(){
-                                         "Invalid authentication request"
-                                    }
-                    });
-                }
             }
 
-            return BadRequest(new AuthResult()
-            {
-                Result = false,
-                Errors = new List<string>(){
-                                        "Invalid payload"
-                                    }
-            });
+            // We dont want to give to much information on why the request has failed for security reasons
+            ModelState.AddModelError("", "Your credentials didn't work.");
+            return BadRequest(ModelState);
+
         }
 
+        /// <summary>
+        /// Sends the forgot password email
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("forgot-password", Name = "ForgotPassword")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
@@ -160,6 +137,7 @@ namespace StoryChainAPI.Controllers
                 // Request not valid
                 return BadRequest();
             }
+
             // Get the user from the email address
             var user = await _userManager.FindByNameAsync(request.Email);
             //if (user != null && !user.EmailConfirmed)
@@ -194,6 +172,7 @@ namespace StoryChainAPI.Controllers
                 // Request not valid
                 return BadRequest(ModelState);
             }
+
             // Get the user from the email address
             var user = await _userManager.FindByIdAsync(request.UserId);
             if (user == null)
@@ -211,6 +190,7 @@ namespace StoryChainAPI.Controllers
             }
             else
             {
+                // Relay errors to client
                 foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError("", error.Description);
@@ -254,7 +234,6 @@ namespace StoryChainAPI.Controllers
                 return;
             }
         }
-        #endregion
 
         private string GenerateJwtToken(IdentityUser user)
         {
@@ -292,6 +271,8 @@ namespace StoryChainAPI.Controllers
 
             return jwtToken;
         }
+
+        #endregion
     }
 
 }

@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace StoryChainAPI.Data.Models
 {
-    public class Tag
+    public class Genre
     {
-        public long Id { get; set; }
+        public int Id { get; set; }
         [Required]
         public string Name { get; set; }
+        public List<Story> Stories { get; set; }
     }
 }

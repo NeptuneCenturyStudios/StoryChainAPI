@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StoryChainAPI.Data;
 
 namespace StoryChainAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210423152506_genre_audiences")]
+    partial class genre_audiences
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -369,10 +371,7 @@ namespace StoryChainAPI.Migrations
                         .HasColumnType("bigint")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<DateTime>("LockEnd")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("LockStart")
+                    b.Property<DateTime>("LockedUntil")
                         .HasColumnType("datetime2");
 
                     b.Property<long?>("StoryId")
@@ -406,9 +405,6 @@ namespace StoryChainAPI.Migrations
                     b.Property<string>("Text")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("WrittenOn")
-                        .HasColumnType("datetime2");
-
                     b.HasKey("Id");
 
                     b.HasIndex("AuthorId");
@@ -428,20 +424,8 @@ namespace StoryChainAPI.Migrations
                     b.Property<int?>("AudienceId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("FinishedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("MaxScenes")
+                    b.Property<int>("Rating")
                         .HasColumnType("int");
-
-                    b.Property<int>("SceneTimeLimitInSeconds")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("ShowAllPreviousScenes")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("StartedOn")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -473,30 +457,6 @@ namespace StoryChainAPI.Migrations
                     b.HasIndex("StoryId");
 
                     b.ToTable("Tags");
-                });
-
-            modelBuilder.Entity("StoryChainAPI.Data.Models.View", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("IPAddress")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long?>("StoryId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime>("ViewedOn")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("StoryId");
-
-                    b.ToTable("Views");
                 });
 
             modelBuilder.Entity("StoryChainAPI.Data.Models.Vote", b =>
@@ -651,19 +611,10 @@ namespace StoryChainAPI.Migrations
                         .HasForeignKey("StoryId");
                 });
 
-            modelBuilder.Entity("StoryChainAPI.Data.Models.View", b =>
-                {
-                    b.HasOne("StoryChainAPI.Data.Models.Story", "Story")
-                        .WithMany()
-                        .HasForeignKey("StoryId");
-
-                    b.Navigation("Story");
-                });
-
             modelBuilder.Entity("StoryChainAPI.Data.Models.Vote", b =>
                 {
                     b.HasOne("StoryChainAPI.Data.Models.Scene", "Scene")
-                        .WithMany("Votes")
+                        .WithMany()
                         .HasForeignKey("SceneId");
 
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
@@ -673,11 +624,6 @@ namespace StoryChainAPI.Migrations
                     b.Navigation("Scene");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("StoryChainAPI.Data.Models.Scene", b =>
-                {
-                    b.Navigation("Votes");
                 });
 
             modelBuilder.Entity("StoryChainAPI.Data.Models.Story", b =>

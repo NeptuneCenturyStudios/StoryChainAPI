@@ -11,7 +11,8 @@ namespace StoryChainAPI.Data.Models
         public long Id { get; set; }
         public Story Story { get; set; }
         public IdentityUser User { get; set; }
-        public DateTime LockedUntil { get; set; }
+        public DateTime LockStart { get; set; }
+        public DateTime LockEnd { get; set; }
 
 
     }
