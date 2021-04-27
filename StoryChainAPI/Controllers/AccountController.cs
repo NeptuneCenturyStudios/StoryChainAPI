@@ -18,7 +18,7 @@ using System.Threading.Tasks;
 
 namespace StoryChainAPI.Controllers
 {
-    [Route("api/v1/account")]
+    [Route("api/v1/[controller]")]
     [ApiController]
     public class AccountController : ControllerBase
     {

@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -27,7 +28,8 @@ namespace StoryChainAPI.Data.Models
         public Audience Audience { get; set; }
         [Required]
         public DateTime StartedOn { get; set; }
-        public DateTime FinishedOn { get; set; }
+        public DateTime? FinishedOn { get; set; }
+        public IdentityUser CreatedBy { get; set; }
 
     }
 }

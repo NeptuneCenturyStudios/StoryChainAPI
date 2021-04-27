@@ -70,7 +70,12 @@ namespace StoryChainAPI
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
+            services.AddIdentityCore<IdentityUser>(options => {
+                options.ClaimsIdentity.UserIdClaimType = "Id";
+            });
+
             services.AddControllers();
+            services.AddRouting(options => options.LowercaseUrls = true);
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "StoryChainAPI", Version = "v1" });
@@ -88,7 +93,6 @@ namespace StoryChainAPI
             }
 
             app.UseHttpsRedirection();
-
             app.UseRouting();
             app.UseCors(_myAllowSpecificOrigins);
             app.UseAuthentication();
