@@ -37,14 +37,15 @@ namespace StoryChainAPI.Data
             builder.Entity<Audience>().HasData(new Audience { Id = 4, Name = "Adult" });
         }
 
-        public DbSet<Story> Stories { get; set; }
-        public DbSet<Author> Authors { get; set; }
-        public DbSet<Scene> Scenes { get; set; }
-        public DbSet<Tag> Tags { get; set; }
-        public DbSet<Genre> Genres { get; set; }
-        public DbSet<Audience> Audiences { get; set; }
-        public DbSet<Vote> Votes { get; set; }
-        public DbSet<Lock> Locks { get; set; }
-        public DbSet<View> Views { get; set; }
+        public virtual DbSet<Story> Stories { get; set; }
+        public virtual DbSet<Author> Authors { get; set; }
+        public virtual DbSet<Scene> Scenes { get; set; }
+        public virtual DbSet<Tag> Tags { get; set; }
+        public virtual DbSet<Genre> Genres { get; set; }
+        public virtual DbSet<Audience> Audiences { get; set; }
+        public virtual DbSet<Vote> Votes { get; set; }
+        public virtual DbSet<Lock> Locks { get; set; }
+        public virtual DbSet<View> Views { get; set; }
+        public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
     }
 }

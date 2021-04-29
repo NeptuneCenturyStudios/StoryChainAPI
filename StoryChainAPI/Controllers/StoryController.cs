@@ -19,18 +19,24 @@ namespace StoryChainAPI.Controllers
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly ApplicationDbContext _db;
-        
-        public StoryController(UserManager<IdentityUser> userManager, ApplicationDbContext dbContext)
+
+        public StoryController(UserManager<IdentityUser> userManager, ApplicationDbContext db)
         {
             _userManager = userManager;
-            _db = dbContext;
+            _db = db;
         }
 
+        /// <summary>
+        /// Creates a new story
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("")]
         public async Task<IActionResult> CreateStory(CreateStoryRequest request)
         {
             using (var transaction = _db.Database.BeginTransaction())
+            using (_db)
             {
                 var user = await _userManager.GetUserAsync(User);
 
@@ -87,11 +93,24 @@ namespace StoryChainAPI.Controllers
             }
 
 
-
-
-
-
             return Created("", "");
+        }
+
+        [HttpGet]
+        [Route("")]
+        public async Task<IActionResult> MyStories(int page, int take)
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            using (_db)
+            {
+                // Get the stories that the user authored or helped author
+                var stories = (from s in _db.Stories
+                               where s.CreatedBy == user
+                               select s).ToArray();
+
+                return Ok(stories);
+            }
         }
     }
 }
