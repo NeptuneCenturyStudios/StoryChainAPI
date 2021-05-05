@@ -10,6 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using StoryChainAPI.Configuration;
 using StoryChainAPI.Data;
+using StoryChainAPI.Data.Models;
 using System.Text;
 
 namespace StoryChainAPI
@@ -42,6 +43,20 @@ namespace StoryChainAPI
             services.Configure<JwtConfig>(Configuration.GetSection("JwtConfig"));
             services.Configure<WebsiteConfig>(Configuration.GetSection("Website"));
 
+            var key = Encoding.ASCII.GetBytes(Configuration["JwtConfig:Secret"]);
+
+            var tokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true, // this will validate the 3rd part of the jwt token using the secret that we added in the appsettings and verify we have generated the jwt token
+                IssuerSigningKey = new SymmetricSecurityKey(key), // Add the secret key to our Jwt encryption
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                RequireExpirationTime = false,
+                ValidateLifetime = true
+            };
+
+            services.AddSingleton(tokenValidationParameters);
+
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -49,28 +64,19 @@ namespace StoryChainAPI
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             }).AddJwtBearer(jwt =>
                 {
-                    var key = Encoding.ASCII.GetBytes(Configuration["JwtConfig:Secret"]);
-
                     jwt.SaveToken = true;
-                    jwt.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuerSigningKey = true, // this will validate the 3rd part of the jwt token using the secret that we added in the appsettings and verify we have generated the jwt token
-                        IssuerSigningKey = new SymmetricSecurityKey(key), // Add the secret key to our Jwt encryption
-                        ValidateIssuer = false,
-                        ValidateAudience = false,
-                        RequireExpirationTime = false,
-                        ValidateLifetime = true
-                    };
+                    jwt.TokenValidationParameters = tokenValidationParameters;
                 });
 
             services.AddDbContext<ApplicationDbContext>(options =>
                options.UseSqlServer(
                    Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            services.AddIdentityCore<IdentityUser>(options => {
+            services.AddIdentityCore<ApplicationUser>(options =>
+            {
                 options.ClaimsIdentity.UserIdClaimType = "Id";
             });
 

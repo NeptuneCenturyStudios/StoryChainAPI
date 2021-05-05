@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace StoryChainAPI.Data.Models
@@ -10,10 +11,11 @@ namespace StoryChainAPI.Data.Models
     {
         public long Id { get; set; }
         public string Text { get; set; }
-        public IdentityUser Author { get; set; }
-        public Story Story { get; set; }
-        public List<Vote> Votes { get; set; }
-        public DateTime WrittenOn { get; set; }
+        public virtual ApplicationUser Author { get; set; }
+        [JsonIgnore]
+        public virtual Story Story { get; set; }
+        public virtual List<Vote> Votes { get; set; }
+        public virtual DateTime WrittenOn { get; set; }
 
     }
 }

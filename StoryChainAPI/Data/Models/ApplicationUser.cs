@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace StoryChainAPI.Data.Models
 {
-    public class Author
+    public partial class ApplicationUser : IdentityUser
     {
-        public long Id { get; set; }
-        public IdentityUser User { get; set; }
-
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
     }
 }

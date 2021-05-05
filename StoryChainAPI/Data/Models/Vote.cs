@@ -12,7 +12,7 @@ namespace StoryChainAPI.Data.Models
     {
         public long Id { get; set; }
         public VoteKind Kind { get; set; }
-        public IdentityUser User { get; set; }
+        public ApplicationUser User { get; set; }
         public DateTime VotedOn { get; set; }
         public string IpAddress { get; set; }
         public Scene Scene { get; set; }

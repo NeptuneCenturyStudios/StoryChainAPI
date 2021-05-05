@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using StoryChainAPI.Data;
 using StoryChainAPI.Data.Models;
 using StoryChainAPI.DTO.Requests;
@@ -15,12 +16,12 @@ namespace StoryChainAPI.Controllers
     [Authorize]
     [Route("api/v1/[controller]")]
     [ApiController]
-    public class StoryController : ControllerBase
+    public class StoriesController : ControllerBase
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly ApplicationDbContext _db;
 
-        public StoryController(UserManager<IdentityUser> userManager, ApplicationDbContext db)
+        public StoriesController(UserManager<ApplicationUser> userManager, ApplicationDbContext db)
         {
             _userManager = userManager;
             _db = db;
@@ -97,20 +98,34 @@ namespace StoryChainAPI.Controllers
         }
 
         [HttpGet]
-        [Route("")]
+        [Route("mine")]
         public async Task<IActionResult> MyStories(int page, int take)
         {
-            var user = await _userManager.GetUserAsync(User);
-
-            using (_db)
+            try
             {
+                var user = await _userManager.GetUserAsync(User);
+
+
                 // Get the stories that the user authored or helped author
                 var stories = (from s in _db.Stories
-                               where s.CreatedBy == user
-                               select s).ToArray();
+                               where s.CreatedBy == user || s.Scenes.Any(sc => sc.Author == user)
+                               select s);
+
+                // Get the first scene the user contributed
+                foreach (var story in stories)
+                {
+                    story.Scenes = _db.Scenes.Where((s) => s.Story.Id == story.Id && s.Author == user).ToList();
+
+                }
 
                 return Ok(stories);
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
             }
         }
     }
 }
+

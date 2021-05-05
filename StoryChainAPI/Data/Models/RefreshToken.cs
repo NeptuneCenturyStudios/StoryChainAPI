@@ -17,6 +17,6 @@ namespace StoryChainAPI.Data.Models
         public DateTime AddedDate { get; set; }
         public DateTime ExpiryDate { get; set; } // Refresh token is long lived it could last for months.
         [Required]
-        public IdentityUser User { get; set; }
+        public ApplicationUser User { get; set; }
     }
 }

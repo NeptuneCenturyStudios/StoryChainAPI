@@ -7,7 +7,7 @@ using System.Text;
 
 namespace StoryChainAPI.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -38,7 +38,6 @@ namespace StoryChainAPI.Data
         }
 
         public virtual DbSet<Story> Stories { get; set; }
-        public virtual DbSet<Author> Authors { get; set; }
         public virtual DbSet<Scene> Scenes { get; set; }
         public virtual DbSet<Tag> Tags { get; set; }
         public virtual DbSet<Genre> Genres { get; set; }

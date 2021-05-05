@@ -23,13 +23,14 @@ namespace StoryChainAPI.Data.Models
         /// </summary>
         [Required]
         public int SceneTimeLimitInSeconds { get; set; }
-        public List<Tag> Tags { get; set; }
-        public List<Genre> Genres { get; set; }
-        public Audience Audience { get; set; }
         [Required]
         public DateTime StartedOn { get; set; }
         public DateTime? FinishedOn { get; set; }
-        public IdentityUser CreatedBy { get; set; }
+        public virtual List<Tag> Tags { get; set; }
+        public virtual List<Genre> Genres { get; set; }
+        public virtual List<Scene> Scenes { get; set; }
+        public virtual Audience Audience { get; set; }
+        public virtual ApplicationUser CreatedBy { get; set; }
 
     }
 }
