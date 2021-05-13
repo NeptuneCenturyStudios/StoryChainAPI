@@ -15,7 +15,8 @@ namespace StoryChainAPI.Data.Models
         [JsonIgnore]
         public virtual Story Story { get; set; }
         public virtual List<Vote> Votes { get; set; }
-        public virtual DateTime WrittenOn { get; set; }
+        public virtual DateTime StartedOn { get; set; }
+        public virtual DateTime? FinishedOn { get; set; }
 
     }
 }

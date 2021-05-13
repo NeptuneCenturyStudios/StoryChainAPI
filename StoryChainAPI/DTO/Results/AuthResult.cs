@@ -11,5 +11,6 @@ namespace StoryChainAPI.DTO.Results
         public string RefreshToken { get; set; }
         public List<string> Errors { get; set; }
         public bool Success { get; set; }
+        public UserDetailsResult UserDetails { get; set; }
     }
 }

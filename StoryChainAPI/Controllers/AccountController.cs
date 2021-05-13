@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -15,6 +16,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -221,6 +223,30 @@ namespace StoryChainAPI.Controllers
 
         }
 
+        /// <summary>
+        /// Gets the user's details
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("user-details")]
+        [Authorize]
+        public async Task<IActionResult> GetUserDetails()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user != null) {
+                var userDetails = new UserDetailsResult()
+                {
+                    EmailHash = GenerateMD5Hash(user.Email)
+                };
+
+                return Ok(userDetails);
+            }
+            else
+            {
+                return Unauthorized();
+            }
+        }
+
         #region Helpers
         private async Task SendConfirmEmail(ApplicationUser user)
         {
@@ -312,7 +338,11 @@ namespace StoryChainAPI.Controllers
             {
                 Success = true,
                 Token = jwtToken,
-                RefreshToken = refreshToken.Token
+                RefreshToken = refreshToken.Token,
+                UserDetails = new UserDetailsResult()
+                {
+                    EmailHash = GenerateMD5Hash(user.Email)
+                }
             };
         }
 
@@ -445,6 +475,23 @@ namespace StoryChainAPI.Controllers
             .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
+        private string GenerateMD5Hash(string stringToHash)
+        {
+            var md5 = new MD5CryptoServiceProvider();
+            var bytesToHash = Encoding.ASCII.GetBytes(stringToHash);
+            var hashedBytes = md5.ComputeHash(bytesToHash);
+            return ByteArrayToString(hashedBytes);
+        }
+
+        public static string ByteArrayToString(byte[] ba)
+        {
+            var hex = new StringBuilder(ba.Length * 2);
+            foreach (byte b in ba)
+            {
+                hex.AppendFormat("{0:x2}", b);
+            }
+            return hex.ToString();
+        }
         #endregion
     }
 

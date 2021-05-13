@@ -15,5 +15,6 @@ namespace StoryChainAPI.DTO.Requests
         public bool OnlyShowPreviousScene { get; set; }
         [Range(5, 25)]
         public int NumberOfScenes { get; set; }
+        public int[] GenreIds { get; set; }
     }
 }

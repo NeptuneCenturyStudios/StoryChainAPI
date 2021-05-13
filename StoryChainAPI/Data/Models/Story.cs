@@ -29,6 +29,7 @@ namespace StoryChainAPI.Data.Models
         public virtual List<Tag> Tags { get; set; }
         public virtual List<Genre> Genres { get; set; }
         public virtual List<Scene> Scenes { get; set; }
+        public virtual List<Lock> Locks { get; set; }
         public virtual Audience Audience { get; set; }
         public virtual ApplicationUser CreatedBy { get; set; }
 
