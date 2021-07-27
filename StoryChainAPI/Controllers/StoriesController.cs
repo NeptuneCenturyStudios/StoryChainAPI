@@ -206,7 +206,7 @@ namespace StoryChainAPI.Controllers
 
                     // Look up the lock. User can have only one lock at a time.
                     var lockedStory = await (from l in _db.Locks.Include(x => x.Story)
-                                             where l.Id == request.LockId && l.User == user
+                                             where l.Id == request.LockId && l.LockEnd <= DateTime.UtcNow && l.User == user
                                              select l).SingleOrDefaultAsync();
                     if (lockedStory != null)
                     {
